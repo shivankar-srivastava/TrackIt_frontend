@@ -168,11 +168,36 @@ margin: 20px;
       font-size: 16px;
       height: 50px;
 }
-.form-data {
-  display: flex;
-  flex-direction: column;
-  padding: 80px;
-   }
+  .form-data {
+    display: flex;
+    flex-direction: column;
+    /* vertical/horizontal padding (reduced vertical padding for tighter layout) */
+    padding: 30px 80px;
+    /* gap between form fields */
+    gap: 12px;
+    max-width: 600px; /* keep form reasonably wide */
+  }
+
+  /* make inputs comfortable to use and full-width within the form */
+  .form-data input[type="text"],
+  .form-data input[type="email"],
+  .form-data input[type="password"],
+  .form-data input[type="tel"],
+  .form-data input[type="number"] {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ensure the form submit button aligns and doesn't inherit large fixed height */
+  .form-data .button {
+    height: auto;
+    padding: 12px 16px;
+    align-self: flex-start; /* keep button left-aligned with inputs */
+  }
 
 
   </style>
