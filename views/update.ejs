@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" width=device-width, initial-scale=1.0">
+  <title>TrackIt Application
+  </title>
+  <style>
+    .profile-section {
+      display: flex;
+      margin: 20px;
+
+    }
+
+    .profile-pic {
+      width: 150px;
+      height: 150px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 50%;
+    }
+
+    .profile-section h2 {
+      font-size: 20px;
+      font-style: bold;
+
+    }
+
+    .content-bar {
+      padding: 30px;
+      width: 50%;
+      text-align: left;
+    }
+
+    .button {
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      height: 50px;
+    }
+
+    .form-data {
+      display: flex;
+      flex-direction: column;
+      /* vertical/horizontal padding (reduced vertical padding for tighter layout) */
+      padding: 30px 80px;
+      /* gap between form fields */
+      gap: 12px;
+      max-width: 600px;
+      /* keep form reasonably wide */
+    }
+
+    /* make inputs comfortable to use and full-width within the form */
+    .form-data input[type="text"],
+    .form-data input[type="email"],
+    .form-data input[type="password"],
+    .form-data input[type="tel"],
+    .form-data input[type="number"] {
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* ensure the form submit button aligns and doesn't inherit large fixed height */
+    .form-data .button {
+      height: auto;
+      padding: 12px 16px;
+      align-self: flex-start;
+      /* keep button left-aligned with inputs */
+    }
+
+    .right-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 600px) {
+      .image-overlay .title {
+        font-size: 1.6rem;
+      }
+
+      .image-overlay .subtitle {
+        font-size: 0.95rem;
+      }
+
+      .image-container {
+        height: 40vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="profile-container">
+    <!-- <h2>Welcome Shivankar!</h2> -->
+    <!-- <img src="images/shivankar.jpg" alt="Avatar" class="avatar"> -->
+    <!-- <h2>Shivankar Srivastava</h2> -->
+    <%- include ('partials/sidebar') %>
+
+      <div class="right-section">
+        <%- include ('partials/header') %>
+
+          <div class="profile-section">
+
+            <img src="images/profile.jpg" alt="Profile Picture" class="profile-pic">
+            <div class="content-bar">
+              <h2>Hi Shivankar!</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Magni ut animi cupiditate, inventore officia voluptates ducimus
+                soluta unde sequi, molestias repellat, laudantium velit
+                aliquid dicta odio sed at iusto esse?</p>
+            </div>
+
+            <input type="button" class="button" value="Edit Profile" href=".form-data">
+          </div>
+          <form class="form-data" id="form-data">
+            <input type="text" id="userName" placeholder="User name">
+            <input type="text" id="firstName" placeholder="First name">
+            <input type="text" id="lastName" placeholder="last name">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <input type="tel" id="contact" placeholder="Contact">
+            <input type="number" id="budget" placeholder="Budget">
+            <input type="text" id="role" placeholder="Role">
+            <input type="number" id="age" placeholder="Age">
+            <input type="text" id="address" placeholder="Address">
+            <button type="submit" class="button">Update</button>
+          </form>
+      </div>
+  </div>
+
+
+  <script>
+    document.getElementById('form-data').addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = {
+        userName: document.getElementById('userName').value,
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        contact: document.getElementById('contact').value,
+        budget: document.getElementById('budget').value,
+        role: document.getElementById('role').value,
+        age: document.getElementById('age').value,
+        address: document.getElementById('address').value
+      }
+      console.log(data);
+      try{
+      const response = await fetch("http://localhost:8080/trackit-user-service/api/v1/updateProfile",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        }
+      )
+      console.log(response);
+      if(!response.ok){
+        alert("Failed to update profile. Please try again.");
+        return;
+      }
+      const result = await response.json();
+      alert("Profile updated successfully");
+      clearForm();
+    }
+    catch(e){
+      alert("Error updating profile. Please try again later.");
+      clearForm();
+    }
+    });
+    function clearForm()
+    {
+      document.getElementById('userName').value = "";
+      document.getElementById('firstName').value = "";
+      document.getElementById('lastName').value = "";
+      document.getElementById('email').value = "";
+      document.getElementById('password').value = "";
+      document.getElementById('contact').value = "";
+      document.getElementById('budget').value = "";
+      document.getElementById('role').value = "";
+      document.getElementById('age').value = "";
+      document.getElementById('address').value = "";  
+    }
+  </script>
+  <%- include ('partials/footer') %>
+
+</body>
+
+</html>

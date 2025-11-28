@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrackIt Application</title>
+  <link rel="icon" type="image/png" href="/expenses.png">
+
+</head>
+<style>
+  .content-section {
+    display: flex;
+    margin: 20px;
+  }
+
+  .image-overlay .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .image-container {
+    height: 40vh;
+  }
+  
+
+  .show-form {
+    padding: 30px;
+    width: 50%;
+    text-align: left;
+  }
+
+  .right-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+  }
+
+  tr:nth-child(even) {
+    background-color: #ccc;
+  }
+
+  .icon-button {
+    align-items: center;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+    background-color: #ccc;
+    border: 0;
+  }
+
+  .quick-link-bar h3 {
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+  }
+
+  .icon-button i {
+    margin-right: 8px;
+    /* space between icon and text */
+  }
+
+  .icon-button:hover {
+    background-color: #e0e0e0;
+  }
+
+  .quick-link-bar {
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .card {
+    border-radius: 5%;
+    display: inline-flex;
+    background: softblue;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    width: 200px;
+  }
+
+  .popup,
+  .popupExpense,
+  .reminder {
+    visibility: hidden;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
+    transition: transform 0.4s, top 0.4s;
+    position: absolute;
+    /* Changed to absolute for proper centering . button layout doesnt get changing*/
+    background-color: beige;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  .open-popup {
+    visibility: visible;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
+
+  }
+
+  .expense-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    gap: 10px;
+  }
+
+  button:hover {
+    background-color: #218838;
+  }
+</style>
+
+<body>
+  <div class="profile-container">
+
+    <%- include ('partials/sidebar') %>
+      <div class="right-section">
+        <%- include ('partials/header') %>
+          <div class="content-section">
+            <div class="show-form">
+              <caption>Recent expenses</caption>
+              <table class="table-section">
+                <thead>
+                  <tr>
+                    <th>Created At</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Budget</th>
+                    <th>Category</th>
+                    <th>Mode</th>
+                  </tr>
+                </thead>
+                <tbody id="show-recent-expense">
+                  <tr>
+                    <td colspan="6"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <div class="quick-link-bar">
+            <h3>Quick Access</h3>
+            <div class="card">
+              <button class="icon-button" type="button" onclick="openForm()">New expense </button>
+              <div class="popup" id="popup">
+                <form id="expense-form" method="POST">
+                  <input type="date" id="createdAt" placeholder="Created At" required>
+                  <input type="text" id="description" placeholder="Description" required>
+                  <input type="number" id="amount" placeholder="Amount" required>
+                  <input type="number" id="budget" placeholder="Budget" required>
+                  <input type="text" list="category-suggestions" id="category" placeholder="Type or Select Category"
+                    required>
+                  <datalist id="category-suggestions">
+
+                    <option value="Essential: Rent/Mortgage">
+                    <option value="Essential: Utilities">
+                    <option value="Essential: Insurance">
+                    <option value="Essential: Debt">
+
+                    <option value="Flexible: Groceries">
+                    <option value="Flexible: Dining Out">
+                    <option value="Flexible: Transportation">
+                    <option value="Flexible: Personal Care">
+                    <option value="Flexible: Health">
+                    <option value="Flexible: Pets">
+
+                    <option value="Financial: Investments">
+                    <option value="Financial: Savings">
+                    <option value="Financial: Taxes">
+                    <option value="Financial: Gifts">
+
+                    <option value="Other">
+                  </datalist>
+
+
+                  <input type="text" id="mode" placeholder="Mode" required>
+
+                  <button type="submit" class="button">Add Expense</button>
+                  <button type="button" class="button" onclick="closeForm()">Close</button>
+                </form>
+              </div>
+            </div>
+            <div class="card"><button class="icon-button" type="button">Monthly report</button>
+              <!--  -->
+            </div>
+            <div class="card"><button class="icon-button" type="button" onclick="searchExpense()">Search expense
+              </button>
+              <div class="popupExpense" id="popupExpense">
+                <form id="search-date">
+                  <strong>Search by Date</strong>
+                  <input type="date" id="startDate" placeholder="Start Date" required>
+                  <input type="date" id="endDate" placeholder="End Date" required>
+                  <button type="submit" class="button">Search</button>
+                  <button type="button" class="button" onclick="closeExpense()">Close</button>
+                </form>
+              </div>
+            </div>
+            <div class="card"><button class="icon-button" type="button" onclick="openReminder()">Reminder </button>
+              <div class="reminder" id="reminder">
+                <strong>Upcoming Reminders</strong>
+                <ul>
+                  <li>Pay electricity bill - Due 10th June</li>
+                  <li>Submit tax documents - Due 15th June</li>
+                  <li>Renew car insurance - Due 20th June</li>
+                </ul>
+                <button type="button" class="button" onclick="closeReminder()">Close</button>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    function openForm() {
+      popup.classList.add('open-popup');
+    }
+    function closeForm() {
+      popup.classList.remove('open-popup');
+    }
+    function searchExpense() {
+      popupExpense.classList.add('open-popup');
+    }
+    function closeExpense() {
+      popupExpense.classList.remove('open-popup');
+    }
+    function openReminder() {
+      reminder.classList.add('open-popup');
+    }
+    function closeReminder() {
+      reminder.classList.remove('open-popup');
+    }
+    document.getElementById('expense-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const categoryInput = document.getElementById('category').value;
+      const sendCategory = categoryInput.includes(':') ? categoryInput.split(':')[0] : categoryInput;
+      const data = {
+        userId: 1,
+        categoryId: 1,
+        createdAt: new Date().toISOString(),
+        description: document.getElementById('description').value,
+        amount: Number(document.getElementById('amount').value),
+        budget: Number(document.getElementById('budget').value),
+        category: sendCategory,
+        mode: document.getElementById('mode').value
+      }
+      console.log(data);
+
+      const response = await fetch("http://localhost:8081/trackit-expense-service/api/v2/newExpense", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      // if(!response.ok){
+      //     const errorText = await response.text();
+      //         console.error(`Server Error (${response.status}):`, errorText);
+      //         alert(`Failed to add expense. Status: ${response.status}. Check console for details.`);
+
+      //         // Throw an error to stop execution here
+      //         throw new Error(`Server responded with status ${response.status}`);
+      // }
+      console.log(response.status);
+      if (response.status === 200) {
+        alert("Expense added successfully");
+        createdAt.value = '';
+        description.value = '';
+        amount.value = '';
+        budget.value = '';
+        category.value = '';
+        mode.value = '';
+        closeForm();
+      } else {
+        alert("Failed to add expense. Please try again.");
+      }
+    });
+    async function loadRecentExpenses() {
+      const tbody = document.getElementById("show-recent-expense");
+      tbody.innerHTML = '<tr><td colspan="6"> Loading data ...</td></tr>';
+      try {
+        const response = await fetch("http://localhost:8081/trackit-expense-service/api/v2/getRecentExpense");
+        console.log(response);
+        if (!response.ok) {
+          console.error(`Server Error (${response.status}) while fetching recent expenses.`);
+          tbody.innerHTML = '<tr><td colspan="6"> Error loading data ...</td></tr>';
+          return;
+        }
+        const result = await response.json();
+        showRecentExpenses(result);
+      }
+      catch (error) {
+        tbody.innerHTML = '<tr><td colspan="6"> Error loading data ...</td></tr>';
+      }
+    };
+
+    function showRecentExpenses(result) { 
+      const tbody = document.getElementById("show-recent-expense");
+      tbody.innerHTML = "";
+      try {
+           if(result.length === 0)
+           {
+            tbody.innerHTML = '<tr><td colspan = "6">No recent expenses available .</td></tr>';
+           }
+           result.forEach(expense =>
+           {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${expense.createdAt}</td>
+                            <td>${expense.description}</td>
+                            <td>${expense.amount}</td>
+                            <td>${expense.budget}</td>
+                            <td>${expense.category}</td>
+                            <td>${expense.mode}</td>`;
+                            tbody.appendChild(row);
+           });
+          }
+      catch(e){
+        console.error("Error loading expenses");
+        tbody.innerHTML = '<tr><td colspan = "6"> Error </td></tr>';
+      }
+    }
+   document.addEventListener('DOMContentLoaded', loadRecentExpenses);
+  </script>
+  <%- include ('partials/footer') %>
+
+</body>
+
+</html>
