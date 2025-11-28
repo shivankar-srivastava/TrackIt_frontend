@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trackit Application</title>
+</head>
+<style>
+    .right-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .faq-item {
+        margin-bottom: 12px;
+    }
+
+    @media (max-width: 600px) {
+        .image-overlay .title {
+            font-size: 1.6rem;
+        }
+
+        .image-overlay .subtitle {
+            font-size: 0.95rem;
+        }
+
+        .image-container {
+            height: 40vh;
+        }
+    }
+
+    .faq-item p {
+        margin: 4px 0 0 0;
+        color: #555;
+    }
+
+    .contact-form {
+        margin-top: 20px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 12px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+</style>
+
+<body>
+    <div class="profile-container">
+
+        <%- include ('partials/sidebar') %>
+            <div class="right-section">
+                <%- include ('partials/header') %>
+
+                    <div class="content-section">
+                        <h2>Support</h2>
+
+                        <h3>Frequently Asked Questions (FAQs)</h3>
+                        <div class="faq-item">
+                            <strong>Q: How do I add a new expense?</strong>
+                            <p>A: Go to the dashboard and click the "Add Expense" button above your expense table.</p>
+                        </div>
+                        <div class="faq-item">
+                            <strong>Q: Can I edit or delete an expense?</strong>
+                            <p>A: Yes, hover over an expense and use the edit/delete icons that appear.</p>
+                        </div>
+
+                        <h3>Contact Support</h3>
+                        <form method="POST" id="contact-form" class="contact-form">
+                            <input type="text" placeholder="Your Name" id="firstName" required>
+                            <input type="email" placeholder="Your Email" id="email" required>
+                            <textarea rows="4" placeholder="Your Message" id="message" required></textarea>
+                            <button type="submit" class="icon-button">Send Message</button>
+                        </form>
+                    </div>
+            </div>
+    </div>
+
+    <%- include ('partials/footer') %>
+    <script>
+          document.getElementById("contact-form").addEventListener("submit", async function(e){
+                  e.preventDefault();
+                  const data = {
+                    firstName : document.getElementById("firstName").value,
+                    email : document.getElementById("email").value,
+                    message : document.getElementById("message").value
+                  }
+                try {
+                 const response = await fetch("http://localhost:8081/trackit-user-service/api/v1/support",
+                    {
+                        method : "POST",
+                        headers : {"Content-Type" : "application/json"},
+                        body : JSON.stringify(data)
+                    });
+                    if(!response.ok){
+                        console.error("Error sending support query");
+                    }
+                    console.log("Support query sent successfully");
+                    alert("Your query has been sent. Our support team will get back to you shortly.");
+                    }
+                    catch(e)
+                    {
+                        console.error("Error sending support query");
+                        alert("There was an error sending your query. Please try again later.");
+                    }
+                });
+
+          
+    </script>
+
+</body>
+
+</html>
